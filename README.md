@@ -40,6 +40,14 @@ Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Window
     pip install -r requirements.txt
     ```    
 3. **Run ollama-ui-win.py**
+   Please edit Ollama Server IP address information in config.ini.
+    ```pwsh
+    [Server]
+    Address = 127.0.0.1
+    Port = 11434
+    ```         
+
+    Run the app.
     ```pwsh
     python ollama-ui-win.py
     ```                
