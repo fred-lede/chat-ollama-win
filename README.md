@@ -19,11 +19,11 @@ Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Window
   1.2  Visit [Ollama's website](https://ollama.com/) to download Ollama for macOS and install the file.
        Ollama and chat-ollama-win can in different host. The default Ollama service is http://127.0.01:11434.
        So that you need to "export OLLAMA_HOST=0.0.0.0:11434", Please visit internet to search detail setting process. 
-    ```pwsh
+  ```pwsh
     ollama pull llama3.2
     ollama pull qwen2.5
     ollama serve
-    ```
+  ```
 
 2. **Create Python Environment and Install Packages:**
     ```pwsh
