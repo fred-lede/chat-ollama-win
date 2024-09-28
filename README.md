@@ -51,3 +51,6 @@ Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Window
     ```pwsh
     python ollama-ui-win.py
     ```                
+**📦 Easy way to use ollama-ui-win.py, if you don't want to set the environment by your self.
+      But you still need to install Ollama and pull the modes by yourself.
+      Please download https://github.com/fred-lede/chat-ollama-win/releases/download/Ver.01/ollama-ui-win.7z and un7Z to your disk.
