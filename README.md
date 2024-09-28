@@ -1,6 +1,10 @@
 # Ollama Chat UI for Windows System
 Use python to create a program that can let people use it link to Ollama service.
 
+## 📦 Easy way to use ollama-ui-win.py, if you don't want to set the environment by your self.
+But you still need to install Ollama and pull the modes by yourself.
+Please download ollama-ui-win.7z from https://github.com/fred-lede/chat-ollama-win/releases/ and un7Z to your disk.
+
 ## 📦 Installation and Setup for Windows
 
 Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Windows:
@@ -52,7 +56,3 @@ Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Window
     python ollama-ui-win.py
     ```
 
-
-** 📦 Easy way to use ollama-ui-win.py, if you don't want to set the environment by your self.
-  But you still need to install Ollama and pull the modes by yourself.
-  Please download ollama-ui-win.7z from https://github.com/fred-lede/chat-ollama-win/releases/ and un7Z to your disk.
