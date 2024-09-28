@@ -1,7 +1,7 @@
 # Ollama Chat UI for Windows System
 Use python to create a program that can let people use it link to Ollama service.
 
-## 📦 Installation and Setup Windows
+## 📦 Installation and Setup for Windows
 
 Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Windows:
 
