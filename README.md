@@ -5,8 +5,9 @@ Use python to create a program that can let people use it link to Ollama service
 
 Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Windows:
 
-1. **Install Ollama:**
-    1.1 Visit [Ollama's website](https://ollama.com/) to download Ollama for Windows and install the file.
+1. **Install Ollama:**   
+
+   1.1 Visit [Ollama's website](https://ollama.com/) to download Ollama for Windows and install the file.
         Ollama and chat-ollama-win are in the same host. The default Ollama service is http://127.0.01:11434. The app can run directly.
         If you install Ollama in A PC and chat-ollama-win in B PC, 
         You need to create a new system Environment Variables as "OLLAMA_HOST=0.0.0.0:11434".
