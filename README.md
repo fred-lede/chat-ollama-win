@@ -15,10 +15,10 @@ Follow these steps to set up and run Chat-Ollama-Win Local with Ollama on Window
     ollama serve
     ```
 
-2. **Create conda environment and install packages:**
+2. **Create Python Environment and Install Packages:**
     ```pwsh
-    git clone https://github.com/karthik-codex/autogen_graphRAG.git
-    cd autogen_graphRAG
+    git clone https://github.com/fred-lede/chat-ollama-win.git
+    cd chat-ollama-win
     python -m venv venv
     ./venv/Scripts/activate
     pip install -r requirements.txt
