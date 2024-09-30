@@ -3,3 +3,4 @@ requests
 configparser
 threading
 json
+Pillow
