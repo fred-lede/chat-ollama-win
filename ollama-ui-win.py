@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog, scrolledtext
 import sqlite3
 import requests
 import configparser
@@ -28,13 +28,52 @@ except KeyError as e:
 
 # Database setup
 myDATABASE = 'ollama_QA.db'
-smallFrame ='1000x900'
-bigFrame = '1000x1050'
+smallFrame ='1000x750+150+0'
+bigFrame = '1000x870+150+0'
+
+def popup(event, text_widget, menu):
+    try:
+        menu.tk_popup(event.x_root, event.y_root)
+    finally:
+        menu.grab_release()
+
+def copy_to_clipboard(text_widget):
+    try:
+        # 嘗試獲取選取的文字
+        text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
+        root.clipboard_clear()
+        root.clipboard_append(text)
+    except tk.TclError:
+        pass  # 沒有選取的文字時，不做任何操作
+
+def select_all(text_widget):
+    text_widget.tag_add(tk.SEL, "1.0", tk.END)
+    text_widget.mark_set(tk.INSERT, "1.0")
+    text_widget.see(tk.INSERT)
+
+def delete_selection(text_widget):
+    try:
+        text_widget.delete(tk.SEL_FIRST, tk.SEL_LAST)
+    except tk.TclError:
+        pass  # 沒有選取的文字時，不做任何操作
+
+def undo_action(text_widget):
+    try:
+        text_widget.edit_undo()
+    except tk.TclError:
+        pass  # 沒有可復原的操作
+            
+def redo_action(text_widget):
+    try:
+        text_widget.edit_redo()
+    except tk.TclError:
+        pass  # 沒有可重做的操作
 
 class OllamaGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Ollama Chat UI for Windows Ver.02")
+        self.root.title("Ollama Chat UI for Windows Ver.03")
+        #self.root.geometry('200x150+100+50')  # 設定視窗大小和位置+100+50
         self.root.geometry(smallFrame)
         self.service_url = f"http://{OLLAMA_SERVICE_URL}:{OLLAMA_SERVICE_PORT}"
         self.uploaded_image_data = None
@@ -102,7 +141,7 @@ class OllamaGUI:
         # 手动选择是否支持 Vision
         self.vision_var = tk.BooleanVar()
         self.vision_checkbutton = tk.Checkbutton(self.root, text="Support Vision (Image Upload)", variable=self.vision_var, command=self.toggle_image_upload)
-        self.vision_checkbutton.grid(row=2, column=1, padx=10, pady=10, sticky='w')
+        self.vision_checkbutton.grid(row=1, column=1, padx=150, pady=10, sticky='w')
         
         # Topic Entry
         tk.Label(self.root, text="Topic:", font=('Helvetica', 12)).grid(row=4, column=0, padx=10, pady=10, sticky='w')
@@ -116,7 +155,8 @@ class OllamaGUI:
         self.image_label = tk.Label(self.question_frame, bg="grey")  # 背景色暂时设为灰色以便可视化
         self.image_label.grid(row=0, column=0, padx=10, pady=10)
         self.image_label.grid_remove()
-        self.question_text = tk.Text(self.question_frame, height=10, width=50)
+        #self.question_text = tk.Text(self.question_frame, height=10, width=50)
+        self.question_text = scrolledtext.ScrolledText(self.question_frame, wrap=tk.WORD, width=60, height=8, undo=True)
         self.question_text.grid(row=0, column=1, padx=5, pady=5)
 
         # Answer Text
@@ -126,8 +166,44 @@ class OllamaGUI:
         self.answer_label = tk.Label(self.answer_frame, bg="grey")  # 背景色暂时设为灰色以便可视化
         self.answer_label.grid(row=0, column=0, padx=10, pady=10)
         self.answer_label.grid_remove()
-        self.answer_entry = tk.Text(self.answer_frame, height=10, width=110)
+        #self.answer_entry = tk.Text(self.answer_frame, height=10, width=110)
+        self.answer_entry = scrolledtext.ScrolledText(self.answer_frame, wrap=tk.WORD, width=115, height=8, undo=True)
         self.answer_entry.grid(row=0, column=1, padx=5, pady=5)
+        
+        # 創建右鍵選單（可編輯文字框）
+        right_click_menu_question = tk.Menu(root, tearoff=0)
+        right_click_menu_question.add_command(label="Copy(C)", command=lambda: copy_to_clipboard(self.question_text))
+        right_click_menu_question.add_command(label="Cut(T)", command=lambda: self.question_text.event_generate("<<Cut>>"))
+        right_click_menu_question.add_command(label="Paste(P)", command=lambda: self.question_text.event_generate("<<Paste>>"))
+        right_click_menu_question.add_command(label="Delete(D)", command=lambda: delete_selection(self.question_text))
+        right_click_menu_question.add_separator()
+        right_click_menu_question.add_command(label="Select All(A)", command=lambda: select_all(self.question_text))
+        right_click_menu_question.add_separator()
+        right_click_menu_question.add_command(label="Undo(Z)", command=lambda: undo_action(self.question_text))
+        right_click_menu_question.add_command(label="Redo(Y)", command=lambda: redo_action(self.question_text))
+        
+        # 創建右鍵選單（可編輯文字框）
+        right_click_menu_answer = tk.Menu(root, tearoff=0)
+        right_click_menu_answer.add_command(label="Copy(C)", command=lambda: copy_to_clipboard(self.answer_entry))
+        right_click_menu_answer.add_command(label="Cut(T)", command=lambda: self.answer_entry.event_generate("<<Cut>>"))
+        right_click_menu_answer.add_command(label="Paste(P)", command=lambda: self.answer_entry.event_generate("<<Paste>>"))
+        right_click_menu_answer.add_command(label="Delete(D)", command=lambda: delete_selection(self.answer_entry))
+        right_click_menu_answer.add_separator()
+        right_click_menu_answer.add_command(label="Select(A)", command=lambda: select_all(self.answer_entry))
+        right_click_menu_answer.add_separator()
+        right_click_menu_answer.add_command(label="Undo(Z)", command=lambda: undo_action(self.answer_entry))
+        right_click_menu_answer.add_command(label="Redo(Y)", command=lambda: redo_action(self.answer_entry))
+
+
+        # 綁定右鍵點擊事件
+        self.question_text.bind("<Button-3>", lambda event: popup(event, self.question_text, right_click_menu_question))
+        self.answer_entry.bind("<Button-3>", lambda event: popup(event, self.answer_entry, right_click_menu_answer))
+        
+        # 綁定快捷鍵（僅對可編輯文字框有效）
+        root.bind_all("<Control-z>", lambda event: undo_action(self.question_text))
+        root.bind_all("<Control-y>", lambda event: redo_action(self.question_text))
+        root.bind_all("<Control-z>", lambda event: undo_action(self.answer_entry))
+        root.bind_all("<Control-y>", lambda event: redo_action(self.answer_entry))
 
         # Buttons Frame
         button_frame = ttk.Frame(self.root)
@@ -159,7 +235,7 @@ class OllamaGUI:
         self.tree.column("Question", width=250)
         self.tree.column("Answer", width=250)
         self.tree.column("Timestamp", width=150)
-        self.tree.grid(row=8, column=0, columnspan=2, padx=10, pady=10, sticky='nsew')
+        self.tree.grid(row=8, column=0, columnspan=2, padx=10, pady=5, sticky='nsew')
 
         # Configure grid to make treeview expandable
         self.root.grid_rowconfigure(6, weight=1)
@@ -167,10 +243,10 @@ class OllamaGUI:
 
         # 添加进度条
         self.progress = ttk.Progressbar(self.root, orient='horizontal', mode='indeterminate')
-        self.progress.grid(row=9, column=0, columnspan=2, padx=10, pady=10, sticky='we')
+        self.progress.grid(row=9, column=0, columnspan=2, padx=10, pady=5, sticky='we')
 
         # 作者
-        tk.Label(self.root, text="e-mail: fred.yt.wang@gmail.com", font=('Helvetica', 10)).grid(row=10, column=0, columnspan=2, padx=10, pady=10, sticky='w')
+        # tk.Label(self.root, text="e-mail: fred.yt.wang@gmail.com", font=('Helvetica', 10)).grid(row=10, column=0, columnspan=2, padx=10, pady=10, sticky='w')
 
         self.tree.bind('<<TreeviewSelect>>', self.on_tree_select)
 
@@ -204,12 +280,18 @@ class OllamaGUI:
             self.image_label.grid()
             if self.uploaded_image_data:
                 self.root.geometry(bigFrame)
+                self.question_text.config(height=16)
+                self.question_text.update_idletasks()  # 強制更新顯示
             else:
                 self.root.geometry(smallFrame)
+                self.question_text.config(height=8)
+                self.question_text.update_idletasks()  # 強制更新顯示
         else:
             self.upload_image_button.grid_remove()
             self.image_label.grid_remove()
             self.root.geometry(smallFrame)
+            self.question_text.config(height=8)
+            self.question_text.update_idletasks()  # 強制更新顯示
     
     def upload_image(self):
         file_path = filedialog.askopenfilename(
@@ -223,10 +305,13 @@ class OllamaGUI:
     def display_image(self, file_path):
         self.root.geometry(bigFrame)
         img = Image.open(file_path)
-        img.thumbnail((400, 300))  # Resize image to fit in the UI
+        img.thumbnail((360, 280))  # Resize image to fit in the UI
         img = ImageTk.PhotoImage(img)
         self.image_label.config(image=img)
         self.image_label.image = img
+        self.question_text.config(height=16)
+        self.question_text.update_idletasks()  # 強制更新顯示
+        
 
     def ask_question(self):
         selected_model = self.model_var.get()
